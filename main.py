@@ -1,13 +1,23 @@
 import json
-
-# Запрашиваем у пользователя номер квалификации и преобразуем в целое число
 number = int(input("Введите номер квалификации: ")) 
-
-# Флаг, указывающий на то, найдена ли квалификация
 find = False
-
-# Открываем файл dump.json в режиме чтения с указанием кодировки UTF-8
 with open("dump.json", 'r', encoding='utf-8') as file: 
-  # Загружаем данные из JSON-файла в переменную data
-  data = json.load(file)
-  print(data) 
+  data = json.load(file) 
+  for skill in data:
+    if skill.get("model") == "data.skill": 
+      if skill["fields"].get("specialty") == number: 
+        skill_code = skill["fields"].get("code")
+        skill_title = skill["fields"].get("title")
+        find = True
+        for profession in data:
+          if profession.get("model") == "data.specialty":
+            specialty_code = profession["fields"].get("code")
+            if specialty_code in skill_code:
+              specialty_title = profession["fields"].get("title")
+              specialty_educational = profession["fields"].get("c_type")
+if not find:
+  print(" Не Найдено".center(58,"-"))
+else:
+  print(" Найдено ".center(58,"-")) 
+  print(f"{specialty_code} >> Специальность '{specialty_title}' , {specialty_educational}")
+  print(f"{skill_code} >> Квалификация '{skill_title}'")
